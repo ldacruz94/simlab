@@ -3,6 +3,7 @@ api/simulation_service.py
 
 Defines the service methods used in the API routes for modifying the db
 """
+from typing import Optional
 
 from fastapi import HTTPException
 from simlab.db.models import SimulationRun, RunResponseDTO, RunRequestDTO, RunResponseListDTO
@@ -54,15 +55,24 @@ async def get_simulation_run(run_id: int) -> RunResponseDTO | HTTPException:
         print(f"Simulation run not found: {ex}")
         raise HTTPException(status_code=500, detail="Failed to find run") from ex
 
-async def get_simulation_runs() -> RunResponseListDTO:
+async def get_simulation_runs(
+        sim_type: Optional[str] = None,
+        status: Optional[str] = None
+) -> RunResponseListDTO:
     """
     Get a list of simulation runs
     :return: List of Simulation Runs
     """
     try:
         with get_db_session() as session:
-            results = session.query(SimulationRun).all()
+            query = session.query(SimulationRun)
 
+            if sim_type:
+                query = query.filter(SimulationRun.sim_type == sim_type)
+            if status:
+                query = query.filter(SimulationRun.status == status)
+
+            results = query.all()
             if not results:
                 raise HTTPException(status_code=404, detail="Simulation Run not found")
 
