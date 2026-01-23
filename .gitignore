@@ -4,3 +4,6 @@
 
 # Cache
 __pycache__/
+
+# DB files
+*.db

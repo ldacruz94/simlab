@@ -1,10 +1,9 @@
 
-
-from api.routes import router
+from simlab.api.routes import router
 from fastapi import FastAPI
 
-from db.models import Base
-from db.session import engine
+from simlab.db.models import Base
+from simlab.db.session import engine
 
 app = FastAPI()
 

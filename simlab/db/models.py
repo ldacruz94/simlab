@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String, JSON
@@ -26,3 +26,7 @@ class RunResponseDTO(BaseModel):
     model_config = {
         "from_attributes": True
     }
+
+class RunResponseListDTO(BaseModel):
+    runs: List[RunResponseDTO]
+    total: int
