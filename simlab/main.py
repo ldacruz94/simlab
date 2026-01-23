@@ -1,7 +1,10 @@
+"""
+App Entry point
+"""
 
-from simlab.api.routes import router
 from fastapi import FastAPI
 
+from simlab.api.routes import router
 from simlab.db.models import Base
 from simlab.db.session import engine
 

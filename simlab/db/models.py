@@ -1,3 +1,9 @@
+"""
+db/models.py
+
+Defines the SimulationRun ORM entities and models
+"""
+
 from typing import Any, Dict, List
 
 from pydantic import BaseModel
@@ -6,7 +12,9 @@ from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
 
-class SimulationRun(Base):
+# pylint: disable=missing-class-docstring
+
+class SimulationRun(Base): # pylint: disable=too-few-public-methods
     __tablename__ = "simulation_runs"
 
     id = Column(Integer, primary_key=True, index=True)

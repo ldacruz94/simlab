@@ -1,7 +1,14 @@
+"""
+db/session.py
+
+Contains DB core and configuration
+"""
+
 from contextlib import contextmanager
 from typing import Generator
 
 from sqlalchemy import create_engine
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker, Session
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
@@ -11,14 +18,18 @@ engine = create_engine(
     connect_args={"check_same_thread": False}
 )
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+SESSION_LOCAL = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 @contextmanager
 def get_db_session() -> Generator[Session, None, None]:
-    db = SessionLocal()
+    """
+    Retrieves DB session
+    :return: Session generator
+    """
+    db = SESSION_LOCAL()
     try:
         yield db
-    except Exception as ex:
+    except SQLAlchemyError as ex:
         print(f"Error connecting: {ex}")
         db.rollback()
     finally:
