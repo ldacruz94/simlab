@@ -1,14 +1,14 @@
 
 from fastapi import APIRouter
 from db.models import RunRequestDTO, RunResponseDTO
+from service.simulation_service import create_run, get_simulation_run
 
 router = APIRouter()
 
-@router.post("/runs", response_model=RunResponseDTO)
-def submit_run(run_request: RunRequestDTO):
-    print(f"{run_request}")
+@router.post("/runs", status_code=201)
+async def submit_run(run_request: RunRequestDTO):
+    return await create_run(run_request)
 
 @router.get("/runs/{id}", response_model=RunResponseDTO)
-def get_run(id: str):
-    print(f"Hello {id}")
-
+async def get_run(id: int):
+    return await get_simulation_run(id)
