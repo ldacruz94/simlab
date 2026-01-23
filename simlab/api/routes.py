@@ -3,8 +3,11 @@ api/routes.py
 
 Defines route API endpoints
 """
+from typing import Optional
 
 from fastapi import APIRouter
+from fastapi import Query
+
 from simlab.db.models import RunRequestDTO, RunResponseDTO, RunResponseListDTO
 from simlab.service.simulation_service import create_run, get_simulation_run, get_simulation_runs
 
@@ -21,5 +24,8 @@ async def get_run(run_id: int):
     return await get_simulation_run(run_id)
 
 @router.get("/runs", response_model=RunResponseListDTO)
-async def get_runs():
-    return await get_simulation_runs()
+async def get_runs(
+        sim_type: Optional[str] = Query(None, description="Filter by simulation type"),
+        status: Optional[str] = Query(None, description="Filter by status")
+):
+    return await get_simulation_runs(sim_type, status)
