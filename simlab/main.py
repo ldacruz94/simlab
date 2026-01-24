@@ -1,6 +1,7 @@
 """
 App Entry point
 """
+import os
 
 from fastapi import FastAPI
 
@@ -10,6 +11,7 @@ from simlab.db.session import engine
 
 app = FastAPI()
 
-Base.metadata.create_all(bind=engine, checkfirst=True)
+if os.getenv("CREATE_TABLES"):
+    Base.metadata.create_all(bind=engine, checkfirst=True)
 
 app.include_router(router)
