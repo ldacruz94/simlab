@@ -14,10 +14,10 @@ def run_simulation(self, run_id: int) -> str | None:
     The celery app run task
     :param self: Celery object
     :param run_id: the sim job run id
-    :return: None
+    :return: None or error string
     """
-    try:
-        with get_db_session() as session:
+    with get_db_session() as session:
+        try:
             run: SimulationRun = session.query(SimulationRun).get(run_id)
 
             if not run:
@@ -30,5 +30,11 @@ def run_simulation(self, run_id: int) -> str | None:
 
             run.status = "SUCCEEDED"
             session.commit()
-    except Exception as ex:
-        self.retry(exc=ex, countdown=5)
+        except LookupError as ex:
+            self.retry(exc=ex, countdown=5)
+        except Exception as ex: # pylint: disable=broad-exception-caught
+            print(f"Simulation {run_id} failed with error: {ex}")
+            run.status = "FAILED"
+            session.commit()
+
+    return None

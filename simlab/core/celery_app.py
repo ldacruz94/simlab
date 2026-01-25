@@ -1,3 +1,8 @@
+
+"""
+Celery app initialization and task route config
+"""
+
 import os
 
 from celery import Celery
