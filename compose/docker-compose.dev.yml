@@ -1,13 +1,48 @@
 
 services:
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"      # broker port
+      - "15672:15672"    # UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
   api:
     command: uvicorn simlab.main:app --reload --host 0.0.0.0 --port 8000
     build:
       context: ..
-      dockerfile: ./docker/api.Dockerfile
+      dockerfile: ./docker/Dockerfile
     container_name: simlab-api
     environment:
       CREATE_TABLES: "true"
       DATABASE_URL: "sqlite:///./test.db"
     ports:
       - "8000:8000"
+    depends_on:
+      - rabbitmq
+
+  worker:
+    command: celery -A simlab.core.celery_app worker --loglevel=info --queues=simulation_queue --concurrency=4
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
+    container_name: simlab_worker
+    volumes:
+      - ../simlab:/app/simlab
+    environment:
+      PYTHONPATH: /app
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
+      CREATE_TABLES: "true"
+      DATABASE_URL: "sqlite:///./test.db"
+      CELERY_RESULT_BACKEND: "rpc://"
+    depends_on:
+      - rabbitmq
+
+volumes:
+  rabbitmq_data:

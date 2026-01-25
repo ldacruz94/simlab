@@ -8,6 +8,7 @@ from typing import Optional
 from fastapi import HTTPException
 from simlab.db.models import SimulationRun, RunResponseDTO, RunRequestDTO, RunResponseListDTO
 from simlab.db.session import get_db_session
+from simlab.tasks.simulation_tasks import run_simulation
 
 
 async def create_run(run_request: RunRequestDTO) -> HTTPException | None:
@@ -26,6 +27,8 @@ async def create_run(run_request: RunRequestDTO) -> HTTPException | None:
             session.add(new_run)
             session.commit()
             session.refresh(new_run)
+
+            run_simulation(new_run.id)
     except Exception as ex:
         print(f"Could not create simulation run: {ex}")
         raise HTTPException(status_code=500, detail="Failed to create simulation run") from ex
