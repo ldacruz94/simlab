@@ -1,6 +1,12 @@
 name: CI Pipeline
 
-on: [push]
+on:
+  push:
+    paths:
+      - 'simlab/**'
+      - 'tests/**'
+      - 'requirements.txt'
+      - '.github/workflows/ci-pipeline.yml'
 
 jobs:
   build:
@@ -8,6 +14,7 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.12", "3.13"]
+
     steps:
     - uses: actions/checkout@v4
     
