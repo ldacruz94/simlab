@@ -3,7 +3,7 @@ db/session.py
 
 Contains DB core and configuration
 """
-
+import os
 from contextlib import contextmanager
 from typing import Generator
 
@@ -11,7 +11,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker, Session
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,

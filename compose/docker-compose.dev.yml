@@ -1,0 +1,13 @@
+
+services:
+  api:
+    command: uvicorn simlab.main:app --reload --host 0.0.0.0 --port 8000
+    build:
+      context: ..
+      dockerfile: ./docker/api.Dockerfile
+    container_name: simlab-api
+    environment:
+      CREATE_TABLES: "true"
+      DATABASE_URL: "sqlite:///./test.db"
+    ports:
+      - "8000:8000"
