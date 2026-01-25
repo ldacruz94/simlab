@@ -28,7 +28,11 @@ async def create_run(run_request: RunRequestDTO) -> HTTPException | None:
             session.commit()
             session.refresh(new_run)
 
-            run_simulation.delay(new_run.id)
+            try:
+                run_simulation.delay(new_run.id)
+            except Exception as celery_ex: # pylint: disable=broad-exception-caught
+                print(f"Could not enqueue Celery task: {celery_ex}")
+
     except Exception as ex:
         print(f"Could not create simulation run: {ex}")
         raise HTTPException(status_code=500, detail="Failed to create simulation run") from ex
